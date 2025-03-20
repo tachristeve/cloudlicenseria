@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { navLinks } from '@/lib/nav-links';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +25,9 @@ const Navbar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
+  // Cette fonction vérifie si le lien est un ancre (section interne) ou une page externe
+  const isAnchorLink = (path: string) => path.startsWith('/#');
+
   return (
     <nav 
       className={cn(
@@ -39,15 +43,29 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           <div className="space-x-8 font-medium">
-            <Link to="/" className="hover:text-primary transition-colors">Accueil</Link>
-            <Link to="#products" className="hover:text-primary transition-colors">Produits</Link>
-            <Link to="#services" className="hover:text-primary transition-colors">Services</Link>
-            <Link to="#pricing" className="hover:text-primary transition-colors">Tarifs</Link>
-            <Link to="#contact" className="hover:text-primary transition-colors">Contact</Link>
+            {navLinks.map((link, index) => (
+              isAnchorLink(link.path) ? (
+                <a 
+                  key={index} 
+                  href={link.path.substring(1)} 
+                  className="hover:text-primary transition-colors"
+                >
+                  {link.text}
+                </a>
+              ) : (
+                <Link 
+                  key={index} 
+                  to={link.path} 
+                  className="hover:text-primary transition-colors"
+                >
+                  {link.text}
+                </Link>
+              )
+            ))}
           </div>
-          <Link to="#pricing" className="btn-primary btn-md rounded-full">
+          <a href="#pricing" className="btn-primary btn-md rounded-full">
             Acheter maintenant
-          </Link>
+          </a>
         </div>
 
         {/* Mobile Menu Button */}
@@ -63,18 +81,34 @@ const Navbar = () => {
         }`}
       >
         <div className="container mx-auto py-4 px-6 space-y-4">
-          <Link to="/" className="block py-2 hover:text-primary" onClick={closeMenu}>Accueil</Link>
-          <Link to="#products" className="block py-2 hover:text-primary" onClick={closeMenu}>Produits</Link>
-          <Link to="#services" className="block py-2 hover:text-primary" onClick={closeMenu}>Services</Link>
-          <Link to="#pricing" className="block py-2 hover:text-primary" onClick={closeMenu}>Tarifs</Link>
-          <Link to="#contact" className="block py-2 hover:text-primary" onClick={closeMenu}>Contact</Link>
-          <Link 
-            to="#pricing" 
+          {navLinks.map((link, index) => (
+            isAnchorLink(link.path) ? (
+              <a 
+                key={index} 
+                href={link.path.substring(1)} 
+                className="block py-2 hover:text-primary" 
+                onClick={closeMenu}
+              >
+                {link.text}
+              </a>
+            ) : (
+              <Link 
+                key={index} 
+                to={link.path} 
+                className="block py-2 hover:text-primary" 
+                onClick={closeMenu}
+              >
+                {link.text}
+              </Link>
+            )
+          ))}
+          <a 
+            href="#pricing" 
             className="btn-primary btn-md block text-center mt-6 rounded-full" 
             onClick={closeMenu}
           >
             Acheter maintenant
-          </Link>
+          </a>
         </div>
       </div>
     </nav>
